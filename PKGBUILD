@@ -1,14 +1,13 @@
-# $Id: PKGBUILD 282432 2016-12-01 09:36:27Z heftig $
+# $Id: PKGBUILD 283027 2016-12-11 02:14:32Z heftig $
 # Maintainer: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Contributor: Tobias Powalowski <tpowa@archlinux.org>
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
-pkgbase=linux-zen-baytrail           # Build -zen kernel
-#pkgbase=linux-custom       # Build kernel with a different name
+pkgbase=linux-zen-baytab           # Build -zen kernel
 _srcname=linux-4.8
-_zenpatch=zen-4.8.11-7b525dd42695cce13515aace18698c5af3ec25b5.diff
+_zenpatch=zen-4.8.13-7c11052b962b646224ee8d24a759016614f5f759.diff
 _rtl8723bs_name=rtl8723bs
-pkgver=4.8.11
+pkgver=4.8.13
 pkgrel=1
 arch=('i686' 'x86_64')
 url="https://github.com/zen-kernel/zen-kernel"
@@ -32,16 +31,11 @@ sha256sums=('SKIP'
             'SKIP'
             'SKIP'
             '83611ab47fd35a6e10cb82ba0924f2dc4220f9af49627d79a89cd543483413ec'
-            '0223f3b605f31b6f18c6c583aee37468e994059b826eefb10141d1ae1e7b3db9'
+            'f2516ad53f673870ae570d639a3e66a673eaa0d98e2ab24efc3dedc8a30797c9'
             '834bd254b56ab71d73f59b3221f056c72f559553c04718e350ab2a3e2991afe0'
             'ad6344badc91ad0630caacde83f7f9b97276f80d26a20619a87952be65492c65'
             '1256b241cd477b265a3c2d64bdc19ffe3c9bbcee82ea3994c590c2c76e767d99'
             'SKIP')
-validpgpkeys=(
-              'ABAF11C65A2970B130ABE3C479BE3E4300411886' # Linus Torvalds
-              '647F28654894E3BD457199BE38DBBDC86092693E' # Greg Kroah-Hartman
-              '8218F88849AAC522E94CF470A5E9288C4FA415FA' # Jan Alexander Steffens (heftig)
-             )
 
 _kernelname=${pkgbase#linux}
 
@@ -81,6 +75,14 @@ prepare() {
     sed -i "s|CONFIG_LOCALVERSION=.*|CONFIG_LOCALVERSION=\"${_kernelname}\"|g" ./.config
     sed -i "s|CONFIG_LOCALVERSION_AUTO=.*|CONFIG_LOCALVERSION_AUTO=n|" ./.config
   fi
+
+  # Baytrail specific to local HW:
+  # msg "Altering kconfig for \"Axdia international GmbH wintab 9 plus 3G/Tablet, BIOS 5.6.5 03/10/2015\""
+  # msg "CONFIG_PWM=y"
+
+  # sed -i "s|# CONFIG_PWM.*|CONFIG_PWM=y\nCONFIG_PWM_CRC=y\n|g" ./.config
+  # sed -i "s|CONFIG_I2C_DESIGNWARE_PLATFORM.*|CONFIG_I2C_DESIGNWARE_PLATFORM=y|g" ./.config
+  # sed -i "s|CONFIG_I2C_DESIGNWARE_PCI.*|CONFIG_I2C_DESIGNWARE_PCI=y|g" ./.config
 
   # set extraversion to pkgrel
   sed -ri "s|^(EXTRAVERSION =).*|\1 -${pkgrel}|" Makefile
